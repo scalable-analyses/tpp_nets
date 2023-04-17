@@ -5,6 +5,7 @@ RPATHS ?=
 LIBXSMM_DIR ?= libxsmm
 OPTIONS = -O2 -std=c++20 -pedantic -Wall -Wextra -DTORCH_API_INCLUDE_EXTENSION_H -I.
 JSONC_INC = -Isubmodules/json/single_include/
+CATCH_INC = -Isubmodules/Catch/single_include/
 
 PYTORCH_INCLUDE ?= $(shell python -c 'from torch.utils.cpp_extension import include_paths; [print(p) for p in include_paths()]')
 PYTORCH_LINK ?= $(shell python -c 'from torch.utils.cpp_extension import library_paths; [print(p) for p in library_paths()]')
@@ -22,8 +23,8 @@ ${BUILD_DIR}/tpp_nets.a: src/backend/BinaryContraction.cpp src/bench/TensorDot.c
 		${AR} rcs ${BUILD_DIR}/tpp_nets.a ${BUILD_DIR}/backend/*.o ${BUILD_DIR}/bench/*.o
 
 ${BUILD_DIR}/test: ${BUILD_DIR}/tpp_nets.a src/backend/BinaryContraction.test.cpp
-		$(CXX) ${OPTIONS} ${CXXFLAGS} -c src/backend/BinaryContraction.test.cpp -o ${BUILD_DIR}/tests/backend/BinaryContraction.test.o
-		$(CXX) ${OPTIONS} ${CXXFLAGS} src/test.cpp ${BUILD_DIR}/tests/backend/*.o ${BUILD_DIR}/tpp_nets.a -o ${BUILD_DIR}/test ${RPATHS} ${LDFLAGS}
+		$(CXX) ${OPTIONS} ${CXXFLAGS} ${CATCH_INC} -c src/backend/BinaryContraction.test.cpp -o ${BUILD_DIR}/tests/backend/BinaryContraction.test.o
+		$(CXX) ${OPTIONS} ${CXXFLAGS} ${CATCH_INC} src/test.cpp ${BUILD_DIR}/tests/backend/*.o ${BUILD_DIR}/tpp_nets.a -o ${BUILD_DIR}/test ${RPATHS} ${LDFLAGS}
 
 ${BUILD_DIR}/bench_tdot: ${BUILD_DIR}/tpp_nets.a src/bench_tdot.cpp
 		$(CXX) ${OPTIONS} ${CXXFLAGS} src/bench_tdot.cpp ${BUILD_DIR}/tpp_nets.a -o ${BUILD_DIR}/bench_tdot ${RPATHS} ${LDFLAGS}
