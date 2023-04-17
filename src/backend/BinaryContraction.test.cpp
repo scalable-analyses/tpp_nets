@@ -2,9 +2,6 @@
 #include <ATen/ATen.h>
 #include "BinaryContraction.h"
 
-
-#include <iostream>
-
 TEST_CASE( "Tests the tppdot routine with column-major A, row-major B, and column-major C.",
            "[tpp_nets][BinaryContraction][tppdot_000]" ) {
   //                        0   1   2   3
